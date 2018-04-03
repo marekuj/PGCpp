@@ -18,7 +18,6 @@ public:
 	bool input(sf::Vector2i pos, sf::Mouse::Button button);
 	bool update();
 	bool draw(sf::RenderWindow& window);
-	bool releasa();
 
 private:
 	static float MAP_OFFSET_X;
@@ -28,7 +27,8 @@ private:
 	unsigned int height;
 	unsigned int width;
 	int bombs;
-	bool isGameOver;
+	bool playerLost;
+	bool playerWin;
 
 	sf::Font font;
 	sf::Text title;
@@ -42,7 +42,7 @@ private:
 	bool disarm_r(unsigned int x, unsigned int y);
 
 	// tools
-	bool checkGameOver();
+	bool checkEnd();
 	sf::Vector2u calcBorder(unsigned int idx, unsigned int maxRange) const;
 	CELL_TYPE calcType(unsigned int x, unsigned int y) const;
 	sf::Vector2u randomXY() const;

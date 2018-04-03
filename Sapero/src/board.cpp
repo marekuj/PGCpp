@@ -14,7 +14,8 @@ CBoard::CBoard(unsigned int height, unsigned int width, int bombs)
 		: height(height),
 		  width(width),
 		  bombs(bombs),
-		  isGameOver(false) {
+		  playerLost(false),
+		  playerWin(false) {
 
 	init();
 }
@@ -96,7 +97,7 @@ bool CBoard::init() {
 }
 
 bool CBoard::input(sf::Vector2i pos, sf::Mouse::Button button) {
-	if (isGameOver) {
+	if (playerLost || playerWin) {
 		return false;
 	}
 
@@ -115,13 +116,16 @@ bool CBoard::input(sf::Vector2i pos, sf::Mouse::Button button) {
 		disarm_r(x, y);
 	}
 	
-	checkGameOver();
+	checkEnd();
 	update();
+
 	return true;
 }
 
 bool CBoard::update() {
-	if (isGameOver) {
+	if (playerWin) {
+		title.setString("Well Done!");
+	} else if (playerLost) {
 		title.setString("Game Over!");
 	} else {
 		title.setString("Bombs: " + std::to_string(bombs));
@@ -153,11 +157,6 @@ bool CBoard::draw(sf::RenderWindow& window)  {
 	}
 	return true;
 }
-
-bool CBoard::releasa() {
-	return true;
-}
-
 
 bool CBoard::select(unsigned int x, unsigned int y) {
 	CCell& cell = vec2d[x][y];
@@ -202,38 +201,49 @@ bool CBoard::disarm_r(unsigned int x, unsigned int y) {
 }
 
 
-bool CBoard::checkGameOver() {
+bool CBoard::checkEnd() {
+	unsigned int count = 0;
+	for (unsigned int i = 0; i < vec2d.size(); ++i) {
+		for (unsigned int j = 0; j < vec2d[i].size(); ++j) {
+			CCell &cell = vec2d[i][j];
+			if (cell.mode == CELL_MODE::CM_SHOW) {
+				if (cell.type == CELL_TYPE::CT_BOMB) {
+					cell.type = CELL_TYPE::CT_BOOM;
+					playerLost = true;
+				} else {
+					++count;
+				}
+			} if (cell.mode == CELL_MODE::CM_FLAG && cell.type == CELL_TYPE::CT_BOMB ) {
+				++count;
+			}
+		}
 
-	//for (unsigned int i = 0; i < vec2d.size(); ++i) {
-	//	for (unsigned int j = 0; j < vec2d[i].size(); ++j) {
-	//		CCell &cell = vec2d[i][j];
-	//		if (cell.mode == CELL_MODE::CM_FLAG && cell.type != CELL_TYPE::CT_BOMB) {
-	//			cell.mode = CELL_MODE::CM_SHOW;
-	//			cell.type = CELL_TYPE::CT_NO_BOOM;
-	//		}
-	//		else if (cell.mode == CELL_MODE::CM_HIDE &&  cell.type == CELL_TYPE::CT_BOMB) {
-	//			cell.mode = CELL_MODE::CM_SHOW;
-	//		}
-	//	}
-	//}
+		if (playerLost) {
+			break;
+		}
+	}
 
-	//if (cell.type == CELL_TYPE::CT_BOMB) {
-	//	endGame = true;
+	if (playerLost) {
+		// show bad choice and hidden bombs
+		for (unsigned int i = 0; i < vec2d.size(); ++i) {
+			for (unsigned int j = 0; j < vec2d[i].size(); ++j) {
+				CCell &cell = vec2d[i][j];
+				if (cell.mode == CELL_MODE::CM_FLAG && cell.type != CELL_TYPE::CT_BOMB) {
+					cell.mode = CELL_MODE::CM_SHOW;
+					cell.type = CELL_TYPE::CT_NO_BOOM;
+				}
+				else if (cell.mode == CELL_MODE::CM_HIDE &&  cell.type == CELL_TYPE::CT_BOMB) {
+					cell.mode = CELL_MODE::CM_SHOW;
+				}
+			}
+		}
+		return true;
+	}
 
-	//	cell.type = CELL_TYPE::CT_BOOM;
-	//	for (unsigned int i = 0; i < vec2d.size(); ++i) {
-	//		for (unsigned int j = 0; j < vec2d[i].size(); ++j) {
-	//			CCell &cell = vec2d[i][j];
-	//			if (cell.mode == CELL_MODE::CM_FLAG && cell.type != CELL_TYPE::CT_BOMB) {
-	//				cell.mode = CELL_MODE::CM_SHOW;
-	//				cell.type = CELL_TYPE::CT_NO_BOOM;
-	//			}
-	//			else if (cell.mode == CELL_MODE::CM_HIDE &&  cell.type == CELL_TYPE::CT_BOMB) {
-	//				cell.mode = CELL_MODE::CM_SHOW;
-	//			}
-	//		}
-	//	}
-	//}
+	if (count == width * height) {
+		playerWin = true;
+	}
+
 	return true;
 }
 

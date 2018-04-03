@@ -8,7 +8,7 @@ int main () {
 	// height
 	// width
 	// bombs
-	saper::CBoard board(18, 18, 22);
+	saper::CBoard board(18, 18, 10);
 
 	while (window.isOpen()) {
 		sf::Event event;
