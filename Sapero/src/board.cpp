@@ -25,7 +25,7 @@ CBoard::~CBoard() {
 
 bool CBoard::init() {
 	// create font
-	if (!font.loadFromFile("D:/Shared/pgcpp/Sapero/asset/courbd.ttf")) {
+	if (!font.loadFromFile("../asset/courbd.ttf")) {
 		return false;
 	}
 
@@ -38,18 +38,18 @@ bool CBoard::init() {
 		mapTexType[(CELL_TYPE)i] = sf::Texture();
 	}
 
-	if ( !mapTexType[CELL_TYPE::CT_VALUE_0].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_0.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_1].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_1.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_2].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_2.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_3].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_3.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_4].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_4.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_5].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_5.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_6].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_6.png") ||
-		 !mapTexType[CELL_TYPE::CT_VALUE_7].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_7.png") ||
- 		 !mapTexType[CELL_TYPE::CT_VALUE_8].loadFromFile("D:/Shared/pgcpp/Sapero/asset/value_8.png") ||
-		 !mapTexType[CELL_TYPE::CT_BOMB].loadFromFile("D:/Shared/pgcpp/Sapero/asset/bomb.png") ||
-		 !mapTexType[CELL_TYPE::CT_NO_BOOM].loadFromFile("D:/Shared/pgcpp/Sapero/asset/no_bomb.png") ||
-		 !mapTexType[CELL_TYPE::CT_BOOM].loadFromFile("D:/Shared/pgcpp/Sapero/asset/boom.png") ) {
+	if ( !mapTexType[CELL_TYPE::CT_VALUE_0].loadFromFile("../asset/value_0.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_1].loadFromFile("../asset/value_1.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_2].loadFromFile("../asset/value_2.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_3].loadFromFile("../asset/value_3.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_4].loadFromFile("../asset/value_4.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_5].loadFromFile("../asset/value_5.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_6].loadFromFile("../asset/value_6.png") ||
+		 !mapTexType[CELL_TYPE::CT_VALUE_7].loadFromFile("../asset/value_7.png") ||
+ 		 !mapTexType[CELL_TYPE::CT_VALUE_8].loadFromFile("../asset/value_8.png") ||
+		 !mapTexType[CELL_TYPE::CT_BOMB].loadFromFile("../asset/bomb.png") ||
+		 !mapTexType[CELL_TYPE::CT_NO_BOOM].loadFromFile("../asset/no_bomb.png") ||
+		 !mapTexType[CELL_TYPE::CT_BOOM].loadFromFile("../asset/boom.png") ) {
 		title.setString("Error: Load type texures faild!");
 		return false;
 	}
@@ -58,9 +58,9 @@ bool CBoard::init() {
 		mapTexMode[(CELL_MODE)i] = sf::Texture();
 	}
 
-	if ( !mapTexMode[CELL_MODE::CM_HIDE].loadFromFile("D:/Shared/pgcpp/Sapero/asset/hide.png") ||
-		 !mapTexMode[CELL_MODE::CM_QUESTION].loadFromFile("D:/Shared/pgcpp/Sapero/asset/question.png") ||
-		 !mapTexMode[CELL_MODE::CM_FLAG].loadFromFile("D:/Shared/pgcpp/Sapero/asset/flag.png") ) {
+	if ( !mapTexMode[CELL_MODE::CM_HIDE].loadFromFile("../asset/hide.png") ||
+		 !mapTexMode[CELL_MODE::CM_QUESTION].loadFromFile("../asset/question.png") ||
+		 !mapTexMode[CELL_MODE::CM_FLAG].loadFromFile("../asset/flag.png") ) {
 		title.setString("Error: Load mode texures faild!");
 		return false;
 	}
@@ -103,13 +103,13 @@ bool CBoard::input(sf::Vector2i pos, sf::Mouse::Button button) {
 
 	int x = pos.x - static_cast<int>(MAP_OFFSET_X);
 	int y = pos.y - static_cast<int>(MAP_OFFSET_Y);
-	if (x < 0 || x > MAP_CELL_SIZE * height ||
-		y < 0 || y > MAP_CELL_SIZE * width) {
-		return false;
-	}
 	x /= static_cast<int>(MAP_CELL_SIZE);
 	y /= static_cast<int>(MAP_CELL_SIZE);
 	
+	if (x < 0 || x >= height || y < 0 || y >= width) {
+		return false;
+	}
+
 	if (button == sf::Mouse::Button::Right) {
 		select(x, y);
 	} else if (button == sf::Mouse::Button::Left) {
